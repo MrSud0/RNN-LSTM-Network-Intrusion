@@ -8,12 +8,12 @@ import sys
 class LstmModel:
     """Implementation of LSTM-RNN model using Keras"""
    def __init__(self,lr,batch_size,cell_size,dropout_rate,num_classes,sequence_length):
-       """Initialize the GRU+Softmax class
+       """Initialize the lstm class
 
               Parameter
               ---------
               alpha : float
-                The learning rate for the GRU+Softmax model.
+                The learning rate for the LSTM model.
               batch_size : int
                 The number of batches to use for training/validation/testing.
               cell_size : int
