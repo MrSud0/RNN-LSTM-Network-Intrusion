@@ -24,8 +24,8 @@ def parse_args():
                        help='the NumPy array validation dataset (*.npy) to be used')
     group.add_argument('-c', '--checkpoint_path', required=True, type=str,
                        help='path where to save the trained model')
-    group.add_argument('-l', '--log_path', required=False, type=str,
-                       help='path where to save the TensorBoard logs')
+    group.add_argument('-l', '--model_path', required=False, type=str,
+                       help='path where to save the model')
     group.add_argument('-m', '--model_name', required=False, type=str,
                        help='filename for the trained model')
     group.add_argument('-r', '--result_path', required=True, type=str,
@@ -84,7 +84,7 @@ def main(arguments):
         test_size = test_features.shape[0]
 
         LstmModel.predict(batch_size=BATCH_SIZE, cell_size=CELL_SIZE, dropout_rate=DROPOUT_P_KEEP,
-                           num_classes=N_CLASSES, test_data=[test_features, test_labels], test_size=test_size,
+                           num_classes=N_CLASSES, test_data=[test_features, test_labels],
                            checkpoint_path=arguments.checkpoint_path, result_path=arguments.result_path)
 
 if __name__ == '__main__':
