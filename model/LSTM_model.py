@@ -170,4 +170,4 @@ class lstm_class:
             os.mkdir(path=result_path)
 
         # save every labels array to NPY file
-        np.save(file=os.path.join(result_path, '{}-gru_softmax-{}.npy'.format(phase, acc)), arr=labels)
+        np.save(file=os.path.join(result_path, '{}-LSTM-Results-{}.npy'.format(phase, acc)), arr=labels)
