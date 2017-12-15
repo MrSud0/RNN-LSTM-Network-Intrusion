@@ -73,8 +73,8 @@ python3 LSTM_main.py --operation "test" \
 --load_model modelsSaves/model_file.h5 \
 --result_path results/
 ```
-### You can also use this TLDR scripts
-For linux:
+### For linux you can also use this TLDR scripts
+
 ### Makes the script files executable
 sudo chmod +x setup.sh
 sudo chmod +x run.sh
@@ -85,3 +85,8 @@ sudo chmod +x run.sh
 ### Runs the LSTM for intrusion detection using the values desribed above
 ./run.sh
 ```
+### For Windows
+-Download Anaconda
+-install prerequisites(requirements.txt)
+-anaconda terminal
+-use the above lines for training and testing
