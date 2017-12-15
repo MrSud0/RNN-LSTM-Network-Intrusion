@@ -25,8 +25,8 @@ sudo pip install -r requirements.txt
 The following are the parameters for the module (`LSTM_main.py`) implementing the LSTM_model class found in `model/LSTM_model.py`:
 
 ```buildoutcfg
-usage: lstm_main.py [-h] -o OPERATION -t TRAIN_DATASET [-v
-                       TEST_DATASET] [-c CHECKPOINT_PATH ]
+usage: lstm_main.py [-h] -o OPERATION -t TRAIN_DATASET
+                      [-v TEST_DATASET] [-c CHECKPOINT_PATH ]
                        [-l LOAD_MODEL] [-s SAVE_MODEL]  -r RESULT_PATH
 
 LSTM for Network Intrustion Detection
