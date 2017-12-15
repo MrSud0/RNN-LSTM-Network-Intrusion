@@ -72,7 +72,7 @@ python3 LSTM_main.py --operation "test" \
 --load_model modelSaves/model_file.h5 \
 --result_path results/
 ```
-### For linux you can also use this TLDR scripts
+## For Linux you can also use these TLDR scripts
 
 ### Makes the script files executable
 sudo chmod +x setup.sh
