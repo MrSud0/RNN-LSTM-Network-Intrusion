@@ -69,7 +69,7 @@ python3 LSTM_main.py --operation "train" \
 ```buildoutcfg
 python3 LSTM_main.py --operation "test" \
 --test_dataset dataset/KDDTest.csv \
---load_model modelsSaves/model_file.h5 \
+--load_model modelSaves/model_file.h5 \
 --result_path results/
 ```
 ### For linux you can also use this TLDR scripts
