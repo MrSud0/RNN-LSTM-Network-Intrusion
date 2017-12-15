@@ -10,8 +10,8 @@ def parse_args():
     group = parser.add_argument_group('Arguments')
     group.add_argument('-t', '--training_results_path', required=True, type=str,
                        help='path where the results of model training are stored')
-    group.add_argument('-v', '--validation_results_path', required=True, type=str,
-                       help='path where the results of model validation are stored')
+    group.add_argument('-v', '--test_results_path', required=True, type=str,
+                       help='path where the results of the model testing are stored')
     arguments = parser.parse_args()
     return arguments
 
@@ -19,7 +19,7 @@ def parse_args():
 def main(argv):
     training_confusion_matrix = plot_confusion_matrix(phase='Training', path=argv.training_results_path,
                                                       class_names=['normal', 'anomaly'])
-    validation_confusion_matrix = plot_confusion_matrix(phase='Validation', path=argv.validation_results_path,
+    validation_confusion_matrix = plot_confusion_matrix(phase='Testing', path=argv.validation_results_path,
                                                         class_names=['normal', 'anomaly'])
     # display the findings from the confusion matrix
     print('True negative : {}'.format(training_confusion_matrix[0][0][0]))
