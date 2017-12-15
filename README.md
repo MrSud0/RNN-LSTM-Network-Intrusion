@@ -4,7 +4,6 @@
 ### Prerequisites
 Python 3.6.3 Keras 2.0.9 Tensorflow-gpu 1.1.0 scikit-learn 0.19.1 pandas 0.21.0 numpy 1.12.1
 
-    >>>Incoming instructions for testing<<<
     >>>The Network is not tuned for optimal results<<<
 
 ## Usage
