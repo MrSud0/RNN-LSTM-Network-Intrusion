@@ -51,9 +51,8 @@ Arguments:
                         path where to save the true and predicted labels
 ```
 
-For training of the model you can use the /datasets/KDDTrain.csv
-
-For testing of the model you can use the /datasets/KDDTest.csv
+For training of the model you can use the /datasets/KDDTrain.csv <br />
+For testing of the model you can use the /datasets/KDDTest.csv <br />
 
 
 ## To train the model:
