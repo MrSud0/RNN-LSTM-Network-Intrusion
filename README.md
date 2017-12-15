@@ -86,7 +86,7 @@ sudo chmod +x run.sh
 ./run.sh
 
 ### For Windows
--Download Anaconda
--install prerequisites(requirements.txt)
--anaconda terminal
--use the above lines for training and testing
+-Download Anaconda <br />
+-install prerequisites(requirements.txt) <br />
+-anaconda terminal <br />
+-use the above lines for training and testing <br />
