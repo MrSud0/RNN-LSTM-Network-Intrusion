@@ -84,7 +84,7 @@ sudo chmod +x run.sh
 ### Runs the LSTM for intrusion detection using the values desribed above
 ./run.sh
 
-### For Windows
+## For Windows
 -Download Anaconda <br />
 -install prerequisites(requirements.txt) <br />
 -anaconda terminal <br />
