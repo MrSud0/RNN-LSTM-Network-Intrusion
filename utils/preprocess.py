@@ -151,6 +151,14 @@ def normnalize(df, labels):
     df = df.astype(np.float32)
     labels = labels.astype(np.bool)
 
+    if(len(df.columns)<122):
+        df.insert(44, column='service_aol', value=0)
+        df.insert(63, column='service_harvest', value=0)
+        df.insert(66, column='service_http_2784', value=0)
+        df.insert(68, column='service_http_8001', value=0)
+        df.insert(91, column='service_red_i', value=0)
+        df.insert(105, column='service_urh_i', value=0)
+
     # we scale high min/max features 'duration' 'src_bytes' 'dst_bytes'  with a log transform
     seterr(divide='ignore')
     df['duration'] = np.log(df['duration'])

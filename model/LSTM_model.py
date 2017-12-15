@@ -144,7 +144,7 @@ class lstm_class:
         print(classification_report(y_pred=y_pred, y_true=y_test))
 
 
-        model.save_labels(predictions=y_pred,actual=y_test,result_path=result_path,phase='testing',acc=acc)
+        lstm_class.save_labels(predictions=y_pred,actual=y_test,result_path=result_path,phase='testing',acc=acc)
 
 
     @staticmethod

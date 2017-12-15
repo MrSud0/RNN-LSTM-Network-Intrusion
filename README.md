@@ -51,4 +51,37 @@ Arguments:
                         path where to save the true and predicted labels
 ```
 
-    >>>Incoming instructions for testing<<<
+For training of the model you can use the /datasets/KDDTrain.csv
+For testing of the model you can use the /datasets/KDDTest.csv
+
+
+###To train the model:
+```buildoutcfg
+cd RNN-LSTM-Network-Intrusion
+python3 LSTM_main.py --operation "train" \
+--train_dataset /datasets/KDDTrain.csv \
+--test_dataset /datasets/KDDTest.csv \
+--checkpoint_path /model/CheckPoints/weights.hdf5" \
+--save_model modelSaves/  \
+--result_path results/
+```
+###To test the model:
+
+```buildoutcfg
+python3 LSTM_main.py --operation "test" \
+--test_dataset dataset/KDDTest.csv \
+--load_model modelsSaves/model_file.h5 \
+--result_path results/
+```
+###You can also use this TLDR scripts
+For linux:
+# Makes the script files executable
+sudo chmod +x setup.sh
+sudo chmod +x run.sh
+
+# Installs the pre-requisites
+./setup.sh
+
+# Runs the LSTM for intrusion detection using the values desribed above
+./run.sh
+```
