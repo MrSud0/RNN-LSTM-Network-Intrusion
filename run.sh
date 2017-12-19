@@ -10,14 +10,14 @@ if [ "$choice" -eq "1" ] &>/dev/null; then
 	python3 LSTM_main.py --operation "train" \
     --train_dataset /datasets/KDDTrain.csv \
     --test_dataset /datasets/KDDTest.csv \
-    --checkpoint_path /model/CheckPoints/weights.hdf5" \
+    --checkpoint_path /CheckPoints/weights.hdf5" \
     --save_model modelSaves/  \
     --result_path results/
 elif [ "$choice" -eq "2" ] &>/dev/null; then
-	if [ -d "./models/checkpoint/" ] &>/dev/null; then
+	if [ -d "./CheckPoints" ] &>/dev/null; then
 		echo "Testing LSTM model for intrusion detection"
 		python3 LSTM_main.py --operation "test" \
-        --test_dataset dataset/KDDTest.csv \
+        --test_dataset datasets/KDDTest.csv \
         --load_model modelsSaves/model_file.h5 \
         --result_path results/
 	else
