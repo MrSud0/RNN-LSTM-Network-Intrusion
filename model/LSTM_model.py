@@ -46,12 +46,11 @@ class lstm_class:
     def create_model(self):
         print("Creating Model")
         model = Sequential()
-        model.add(LSTM(128, input_shape=(1, self.sequence_length), return_sequences=True, activation='sigmoid', unit_forget_bias=1))
-        model.add(Dropout(self.dropout))
-        model.add(LSTM(units=self.cell_size, inner_activation='hard_sigmoid', activation='sigmoid', return_sequences=True,
-               unit_forget_bias=1))
-        model.add(Dropout(self.dropout))
-        model.add(LSTM(activation='softmax', units=1))
+        model.add(LSTM(2, input_shape=(1, self.sequence_length), return_sequences=True, activation='sigmoid', unit_forget_bias=1))
+        #model.add(Dropout(self.dropout))
+        model.add(LSTM(units=self.cell_size, inner_activation='hard_sigmoid', activation='sigmoid',))
+        #model.add(Dropout(self.dropout))
+        model.add(Dense(activation='sigmoid', units=1))
         print('Compiling...')
         adam=Adam(lr=self.alpha)
         model.compile(loss='binary_crossentropy', optimizer=adam, metrics=['accuracy'])
@@ -59,54 +58,58 @@ class lstm_class:
 
 
 
-    def train(checkpoint_path,model, epochs, X_train, y_train,model_path,batch_size,X_val,y_val,result_path):
+    def train(self,checkpoint_path,model, epochs, X_train, y_train,model_path,batch_size,X_val,y_val,result_path):
         """Trains the model
 
                Parameter
                ---------
                checkpoint_path : str
-                 The path where to save the trained model.
-               model_name : str
-                 The filename for the trained model.
+                 The path where to save the trained model's weights.
+               model : str
+                 The model created by create_model pass throught a global variable
                epochs : int
                  The number of passes through the whole dataset.
-               train_data : numpy.ndarray
-                 The NumPy array training dataset.
-               train_size : int
-                 The size of `train_data`.
-               validation_data : numpy.ndarray
-                 The NumPy array testing dataset.
-               validation_size : int
-                 The size of `validation_data`.
+               X_train,y_train : numpy.ndarray
+                 The NumPy array training data and its labels.
+               X_val,y_val : numpy.ndarray
+                 The NumPy array validation data and its labels.
                model_path : str
                  The path where to save the model.
+               batch_size: str
+                 Batch size used for training.
+               result_path : str
+                 The path where to save numpy.ndarrays for the testing phase.
                """
 
         if not os.path.exists(path=checkpoint_path):
             os.mkdir(path=checkpoint_path)
         # checkpoint
 
-        filepath = checkpoint_path
+
+        filepath = os.path.join(checkpoint_path, '{}-weights.-{}.hdf5'.format(self.cell_size,self.sequence_length))
+        #TODO ADD ARGUMENT TO LOAD WEIGHTS
         #filepath="weights.best.hdf5"
+        #set the callback variables
         checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
         early_stopping_monitor = EarlyStopping(monitor='val_loss',patience=4)
         history = History()
         callbacks_list = [checkpoint, history,early_stopping_monitor]
         print(model.summary())
         print('Fitting model...')
-        history = model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1,
-                            validation_data=(X_val,y_val),callbacks=callbacks_list)
-
+        #TODO KFOLD VALIDATION
+        history = model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(X_val,y_val),callbacks=callbacks_list)
+        #Evaluation using the trained data
         score, acc = model.evaluate(X_train, y_train, batch_size=batch_size)
+        #predict classes of the trained data
         y_pred = model.predict_classes(X_train, batch_size=batch_size)
         print("test data , score ,accu")
         print('Test score:', score)
         print('Test accuracy:', acc)
         print("train data, score ,accu")
-        if (acc > 0.9):
-             model.save('F:\RNN-LSTM-Network-Intrusion\modelSaves\model_file.h5'.format(acc,precision_score(y_train,y_pred)))
-
-
+        #saving the model
+        file = os.path.join(model_path, '{}-trained model-{}.h5'.format(self.alpha, float('%.2f' % acc)))
+        model.save(file)
+        #saving the labels to npy files under result_path
         lstm_class.save_labels(predictions=y_pred,actual=y_train,result_path=result_path,phase='training',acc=acc)
 
         # summarize history for training accuracy
@@ -145,7 +148,8 @@ class lstm_class:
 
 
         lstm_class.save_labels(predictions=y_pred,actual=y_test,result_path=result_path,phase='testing',acc=acc)
-
+        file = os.path.join('F:\RNN-LSTM-Network-Intrusion\modelSaves', '{}-tested model-{}.h5'.format(batch_size, float('%.2f' % acc)))
+        model.save(file)
 
     @staticmethod
     def save_labels(predictions, actual, result_path, phase,acc):
@@ -160,7 +164,7 @@ class lstm_class:
         result_path : str
           The path where to save the concatenated actual and predicted labels.
         phase : str
-          The phase for which the predictions is, i.e. training/validation/testing.
+          The phase for which the predictions is, i.e. training/testing.
         """
 
         # Concatenate the predicted and actual labels
@@ -170,4 +174,4 @@ class lstm_class:
             os.mkdir(path=result_path)
 
         # save every labels array to NPY file
-        np.save(file=os.path.join(result_path, '{}-LSTM-Results-{}.npy'.format(phase, acc)), arr=labels)
+        np.save(file=os.path.join(result_path, '{}-LSTM-Results-{}.npy'.format(phase, float('%.2f'%acc))), arr=labels)

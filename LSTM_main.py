@@ -8,13 +8,15 @@ import argparse
 
 
 # hyper-parameters
-BATCH_SIZE = 256
-CELL_SIZE = 256
-DROPOUT = 0.2
+BATCH_SIZE = 1000
+CELL_SIZE = 80
+DROPOUT = 0
 HM_EPOCHS = 10
 LEARNING_RATE = 0.001
 SEQUENCE_LENGTH = 122
 #VALIDATION_SPLIT=0.1
+#TODO IMPLEMENT FEATURE SELECTION
+FEATURE_SELECTION = False
 
 
 
@@ -30,7 +32,7 @@ def parse_args():
     group.add_argument('-v', '--test_dataset', required=False, type=str,
                        help='the test dataset (*.csv) to be used')
     group.add_argument('-c', '--checkpoint_path', required=False, type=str,
-                       help='path where to save the weights of  model example : filepath="CheckPoints/LSTMsoftmax/LSTM-a{epoch:02d}-{val_acc:.2f}.hdf5"')
+                       help='path where to save the weights of  model example : filepath="checkpoints/LSTMsoftmax/LSTM-a{epoch:02d}-{val_acc:.2f}.hdf5"')
     group.add_argument('-l', '--load_model', required=False, type=str,
                       help='path to load a trained model and use it for testing')
     group.add_argument('-s', '--save_model', required=False, type=str,
@@ -55,13 +57,14 @@ def main(arguments):
 
         #numerizing/normalizig on scale [0,1] the train dataset/labels
         #returns numpy arrays
-        train_features,train_labels=data.normnalize(train_features,train_labels)
+        train_features,train_labels=data.normalize(train_features,train_labels)
 
 
         # split into 70% for train and 30% for test
         train_features,validation_features,train_labels, validation_labels = train_test_split(train_features, train_labels, test_size=0.30, random_state=seed)
 
         #reshaping to 3d so the data fit into the lstm model
+        #if you are using embedding layer as first layer then you can comment out the next two lines
         train_features = np.reshape(train_features, (train_features.shape[0], 1, train_features.shape[1]))
         validation_features = np.reshape(validation_features, (validation_features.shape[0], 1, validation_features.shape[1]))
         print("Prining Training Features Shape:")
@@ -74,11 +77,11 @@ def main(arguments):
         print(validation_labels.shape)
 
         # create model
-
         model=lstm_class.create_model(lstm_class(alpha=LEARNING_RATE, batch_size=BATCH_SIZE, cell_size=CELL_SIZE, dropout=DROPOUT,
                             sequence_length=SEQUENCE_LENGTH))
         # train model
-        lstm_class.train(checkpoint_path=arguments.checkpoint_path,batch_size=BATCH_SIZE,model=model
+        lstm_class.train(lstm_class(alpha=LEARNING_RATE, batch_size=BATCH_SIZE, cell_size=CELL_SIZE, dropout=DROPOUT,
+                            sequence_length=SEQUENCE_LENGTH),checkpoint_path=arguments.checkpoint_path,batch_size=BATCH_SIZE,model=model
                     ,model_path=arguments.save_model, epochs=HM_EPOCHS, X_train=train_features,y_train= train_labels,
                     X_val=validation_features,y_val=validation_labels,
                     result_path=arguments.result_path)
@@ -91,10 +94,11 @@ def main(arguments):
 
         # numerizing/normalizig on scale [0,1] the train dataset/labels
         # returns numpy arrays
-        test_features,test_labels=data.normnalize(test_features,test_labels)
+        test_features,test_labels=data.normalize(test_features,test_labels)
 
 
         #rehaping to 3d so the data match the trained shape of our model
+        #if you are trained a model starting with embedding layer then you can comment out the next line
         test_features = np.reshape(test_features, (test_features.shape[0], 1, test_features.shape[1]))
         lstm_class.predict(batch_size=BATCH_SIZE,X_test=test_features,y_test=test_labels,model_path=arguments.load_model,
                             result_path=arguments.result_path)

@@ -4,14 +4,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import preprocessing
-from sklearn.preprocessing import MinMaxScaler,LabelEncoder
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import confusion_matrix
-import tensorflow as tf
 import pandas as pd
 import os
 from numpy import seterr,isneginf
 from os import walk
-import sys
 
 
 def load_data(dataset):
@@ -47,7 +45,7 @@ def plot_confusion_matrix(phase, path, class_names):
     Parameter
     ---------
     phase : str
-      String value indicating for what phase is the confusion matrix, i.e. training/validation/testing
+      String value indicating for what phase is the confusion matrix, i.e. training/testing
     path : str
       Directory where the predicted and actual label NPY files are located
     class_names : str
@@ -65,23 +63,23 @@ def plot_confusion_matrix(phase, path, class_names):
     files = list_files(path=path)
 
     labels = np.array([])
-
+    print(files)
     for file in files:
         labels_batch = np.load(file)
         labels = np.append(labels, labels_batch)
-
+        print(labels.shape)
         if (files.index(file) / files.__len__()) % 0.2 == 0:
             print('Done appending {}% of {}'.format((files.index(file) / files.__len__()) * 100, files.__len__()))
 
-    labels = np.reshape(labels, newshape=(labels.shape[0] // 4, 4))
+    labels = np.reshape(labels, newshape=(labels.shape[0] // 2, 2))
 
     print('Done appending NPY files.')
-
+    print(labels.dtype)
     # get the predicted labels
-    predictions = labels[:, :2]
+    predictions = labels[:, :1]
 
     # get the actual labels
-    actual = labels[:, 2:]
+    actual = labels[:, 1:]
 
 
     # get the confusion matrix based on the actual and predicted labels
@@ -127,11 +125,6 @@ def list_files(path):
          file_list : list
            A list of the files present in the given directory
 
-         Examples
-         --------
-         >>> PATH = '/home/data'
-         >>> list_files(PATH)
-         >>> ['/home/data/file1', '/home/data/file2', '/home/data/file3']
          """
 
     file_list = []
@@ -140,8 +133,7 @@ def list_files(path):
     return file_list
 
 #TODO add argument "column list that need transformation from categorical to numerical
-def normnalize(df, labels):
-
+def normalize(df, labels):
     # one hot encoding the 3 categorical features of the dataset
     df = pd.get_dummies(df, columns=["protocol_type", "service", "flag"])
     df.head()
@@ -150,7 +142,7 @@ def normnalize(df, labels):
 
     df = df.astype(np.float32)
     labels = labels.astype(np.bool)
-
+    #TODO Need to find better solution for testing dataset with less features than the dataset that trained the network
     if(len(df.columns)<122):
         df.insert(44, column='service_aol', value=0)
         df.insert(63, column='service_harvest', value=0)

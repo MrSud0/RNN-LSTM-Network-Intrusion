@@ -1,14 +1,14 @@
 
 
-
+#Module that returns the results of the statistical results
 import argparse
 
-from utils.preprocess import plot_confusion_matrix
+from utils.preprocess  import plot_confusion_matrix
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Confusion Matrix for Intrusion Detection')
     group = parser.add_argument_group('Arguments')
-    group.add_argument('-t', '--training_results_path', required=True, type=str,
+    group.add_argument('-t', '--training_results_path', required=False, type=str,
                        help='path where the results of model training are stored')
     group.add_argument('-v', '--test_results_path', required=True, type=str,
                        help='path where the results of the model testing are stored')
@@ -17,8 +17,10 @@ def parse_args():
 
 
 def main(argv):
-    training_confusion_matrix = plot_confusion_matrix(phase='Training', path=argv.training_results_path,
+    if(argv.training_results_path!=None):
+        training_confusion_matrix = plot_confusion_matrix(phase='Training', path=argv.training_results_path,
                                                       class_names=['normal', 'anomaly'])
+
     testing_confusion_matrix = plot_confusion_matrix(phase='Testing', path=argv.test_results_path,
                                                         class_names=['normal', 'anomaly'])
     # display the findings from the confusion matrix
