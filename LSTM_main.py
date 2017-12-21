@@ -9,6 +9,7 @@ import argparse
 
 # hyper-parameters
 BATCH_SIZE = 1000
+BATCH_SIZE_TESTING=1
 CELL_SIZE = 80
 DROPOUT = 0
 HM_EPOCHS = 10
@@ -100,7 +101,7 @@ def main(arguments):
         #rehaping to 3d so the data match the trained shape of our model
         #if you are trained a model starting with embedding layer then you can comment out the next line
         test_features = np.reshape(test_features, (test_features.shape[0], 1, test_features.shape[1]))
-        lstm_class.predict(batch_size=BATCH_SIZE,X_test=test_features,y_test=test_labels,model_path=arguments.load_model,
+        lstm_class.predict(batch_size=BATCH_SIZE_TESTING,X_test=test_features,y_test=test_labels,model_path=arguments.load_model,
                             result_path=arguments.result_path)
 
 if __name__ == '__main__':
