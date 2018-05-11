@@ -46,9 +46,9 @@ class lstm_class:
     def create_model(self):
         print("Creating Model")
         model = Sequential()
-        model.add(LSTM(2, input_shape=(1, self.sequence_length), return_sequences=True, activation='sigmoid', unit_forget_bias=1))
+        model.add(LSTM(2, input_shape=(1, self.sequence_length), return_sequences=True, activation='sigmoid'))
         #model.add(Dropout(self.dropout))
-        model.add(LSTM(units=self.cell_size, inner_activation='hard_sigmoid', activation='sigmoid',))
+        model.add(LSTM(units=self.cell_size, inner_activation='hard_sigmoid', activation='sigmoid'))
         #model.add(Dropout(self.dropout))
         model.add(Dense(activation='sigmoid', units=1))
         print('Compiling...')
@@ -90,8 +90,8 @@ class lstm_class:
         #TODO ADD ARGUMENT TO LOAD WEIGHTS
         #filepath="weights.best.hdf5"
         #set the callback variables
-        checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
-        early_stopping_monitor = EarlyStopping(monitor='val_loss',patience=4)
+        checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, mode='max')
+        early_stopping_monitor = EarlyStopping(monitor='val_loss',patience=10)
         history = History()
         callbacks_list = [checkpoint, history,early_stopping_monitor]
         print(model.summary())
@@ -107,7 +107,7 @@ class lstm_class:
         print('Test accuracy:', acc)
         print("train data, score ,accu")
         #saving the model
-        file = os.path.join(model_path, '{}-trained model-{}.h5'.format(self.alpha, float('%.2f' % acc)))
+        file = os.path.join(model_path, '{}-trained-model-{}.h5'.format(self.alpha, float('%.2f' % acc)))
         model.save(file)
         #saving the labels to npy files under result_path
         lstm_class.save_labels(predictions=y_pred,actual=y_train,result_path=result_path,phase='training',acc=acc)
@@ -132,24 +132,32 @@ class lstm_class:
 
     @staticmethod
     def predict(batch_size, X_test, y_test,result_path,model_path):
-
-        print("Loading Model")
+        termwidth, fillchar = 124, '-'
+        print("Loading Model...")
         model=load_model(model_path)
-        score, acc = model.evaluate(X_test, y_test, batch_size=batch_size)
-
+        #print(" Evaluating ".center(termwidth,fillchar))
+        #score, acc = model.evaluate(X_test, y_test, batch_size=batch_size)
+        #print('\n')
+        print(" Predicting ".center(termwidth,fillchar))
         y_pred = model.predict_classes(X_test, batch_size=batch_size)
-
         y_pred = y_pred.astype(bool)
         y_test = y_test.astype(bool)
-
         # classification report
-        print("Classification Report")
-        print(classification_report(y_pred=y_pred, y_true=y_test))
-
-
+        #print("\nClassification Report")
+        conf = confusion_matrix(y_test,y_pred).ravel()
+        tn,fp,fn,tp = conf
+        acc = (tp+tn)/(tp+tn+fp+fn)
+        fpr = fp/(fp+tn)
+        tpr = tp/(tp+fn)
+        #print(fpr)
+        #print(tpr)
+        #print("Accuracy",float("{0:5f}".format(acc))*100)
+        #print(classification_report(y_pred=y_pred, y_true=y_test))
+        #print(conf)
+        print("Saving results to: " + result_path)
         lstm_class.save_labels(predictions=y_pred,actual=y_test,result_path=result_path,phase='testing',acc=acc)
-        file = os.path.join('F:\RNN-LSTM-Network-Intrusion\modelSaves', '{}-tested model-{}.h5'.format(batch_size, float('%.2f' % acc)))
-        model.save(file)
+        #file = os.path.join('F:\RNN-LSTM-Network-Intrusion\modelSaves', '{}-tested model-{}.h5'.format(batch_size, float('%.2f' % acc)))
+        #model.save(file)
 
     @staticmethod
     def save_labels(predictions, actual, result_path, phase,acc):
