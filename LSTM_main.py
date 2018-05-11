@@ -5,22 +5,24 @@ from model.LSTM_model import lstm_class
 from sklearn.model_selection import train_test_split
 import numpy as np
 import argparse
-
+import os
+import tensorflow as tf
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # hyper-parameters
-BATCH_SIZE = 1000
-BATCH_SIZE_TESTING=1
-CELL_SIZE = 80
-DROPOUT = 0
-HM_EPOCHS = 10
-LEARNING_RATE = 0.001
+BATCH_SIZE = 10000
+BATCH_SIZE_TESTING=1000
+CELL_SIZE = 120
+DROPOUT = 0.2
+HM_EPOCHS = 100
+LEARNING_RATE = 0.1
 SEQUENCE_LENGTH = 122
 #VALIDATION_SPLIT=0.1
 #TODO IMPLEMENT FEATURE SELECTION
 FEATURE_SELECTION = False
 
-
-
+import warnings
+warnings.filterwarnings("ignore")
 
 def parse_args():
     parser = argparse.ArgumentParser(description='LSTM for Intrusion Detection')
@@ -41,7 +43,7 @@ def parse_args():
     group.add_argument('-r', '--result_path', required=True, type=str,
                        help='path where to save the true and predicted labels')
     arguments = parser.parse_args()
-    print(arguments)
+    #print(arguments)
     return arguments
 
 def main(arguments):
@@ -88,19 +90,19 @@ def main(arguments):
                     result_path=arguments.result_path)
 
     elif arguments.operation == 'test':
-
         # get the test data
         # features: test_features[0], labels: test_labels[1]
-        test_features, test_labels = data.load_data(dataset=arguments.test_dataset)
-
+        print("Loading Test Data...")    
+        test_features, test_labels = data.load_data(dataset=arguments.test_dataset) 
         # numerizing/normalizig on scale [0,1] the train dataset/labels
         # returns numpy arrays
+        print("Normallizing Data...")
         test_features,test_labels=data.normalize(test_features,test_labels)
 
 
         #rehaping to 3d so the data match the trained shape of our model
         #if you are trained a model starting with embedding layer then you can comment out the next line
-        test_features = np.reshape(test_features, (test_features.shape[0], 1, test_features.shape[1]))
+        #test_features = np.reshape(test_features, (test_features.shape[0], 1, test_features.shape[1]))
         lstm_class.predict(batch_size=BATCH_SIZE_TESTING,X_test=test_features,y_test=test_labels,model_path=arguments.load_model,
                             result_path=arguments.result_path)
 
